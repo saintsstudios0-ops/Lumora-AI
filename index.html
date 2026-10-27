@@ -93,9 +93,10 @@
         const dados = await resposta.json();
         if (!resposta.ok) throw new Error(dados.error || "Erro ao gerar resposta.");
         resultado.textContent = dados.text;
-      } catch (erro) { } catch (erro) {
+       } catch (erro) {
   resultado.textContent = "Erro: " + erro.message;
-          }
+      }
+          
         resultado.textContent = "Não foi possível gerar a resposta. Verifique a configuração da IA no Netlify.";
       }
     });
