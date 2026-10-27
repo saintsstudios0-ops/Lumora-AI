@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090f">
+  <title>Lumora AI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #09090f;
+      color: #f5f5ff;
+    }
+    header {
+      padding: 22px;
+      border-bottom: 1px solid #292938;
+      font-size: 23px;
+      font-weight: bold;
+      color: #a99aff;
+    }
+    main {
+      max-width: 760px;
+      margin: 55px auto;
+      padding: 20px;
+    }
+    h1 { font-size: clamp(32px, 7vw, 48px); }
+    p { color: #b8b8ca; line-height: 1.6; }
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #39394f;
+      background: #151520;
+      color: white;
+      font-size: 16px;
+      resize: vertical;
+    }
+    button {
+      margin-top: 14px;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 10px;
+      background: #8b73ff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #resultado {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 12px;
+      background: #151520;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+  <header>✦ Lumora AI</header>
+  <main>
+    <h1>Sua criatividade começa aqui.</h1>
+    <p>Escreva sua ideia e prepare um pedido para a inteligência artificial.</p>
+    <textarea id="prompt" placeholder="Ex.: Crie uma ideia de negócio online..."></textarea>
+    <button id="gerar">Gerar resposta</button>
+    <div id="resultado" hidden></div>
+  </main>
+  <script>
+    const campo = document.getElementById("prompt");
+    const resultado = document.getElementById("resultado");
+
+    document.getElementById("gerar").addEventListener("click", async () => {
+      const prompt = campo.value.trim();
+      if (!prompt) {
+        alert("Digite sua ideia primeiro.");
+        return;
+      }
+
+      resultado.hidden = false;
+      resultado.textContent = "Pensando...";
+
+      try {
+        const resposta = await fetch("/.netlify/functions/ai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+
+        const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.error || "Erro ao gerar resposta.");
+        resultado.textContent = dados.text;
+      } catch (erro) {
+        resultado.textContent = "Não foi possível gerar a resposta. Verifique a configuração da IA no Netlify.";
+      }
+    });
+  </script>
+</body>
+</html>
